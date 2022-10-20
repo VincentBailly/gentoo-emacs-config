@@ -1,0 +1,3 @@
+* Gentoo emacs config files
+
+** Setup
