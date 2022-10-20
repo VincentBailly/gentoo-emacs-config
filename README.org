@@ -31,8 +31,9 @@ All the commands are run in a Linux environment.
 *** Bash
 
 Default shell is bash, and all commands are run in a bash session.
-To check default shell: ~echo $SHELL~
-To check current shell: ~echo $0~
+
+- To check default shell: ~echo $SHELL~
+- To check current shell: ~echo $0~
 
 *** emacs config file
 
