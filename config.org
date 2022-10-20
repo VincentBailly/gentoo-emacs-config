@@ -1,5 +1,43 @@
+* EXWM - Emacs Window Manager
+
 #+begin_src emacs-lisp :tangle ~/.emacs.d/config.el
-  (setq testing-var 42)
+
+(require 'exwm)
+(setq exwm-input-global-keys
+      `(([?\s-f] . (lambda ()
+                     (interactive)
+                     (start-process-shell-command "firefox" nil "firefox")))
+        ([?\s-r] . exwm-reset)
+	([?\s-&] . (lambda (command)
+		     (interactive (list (read-shell-command "$ ")))
+		     (start-process-shell-command command nil command)))
+	([?\s-w] . exwm-workspace-switch)
+        ,@(mapcar (lambda (i)
+                    `(,(kbd (format "s-%d" i)) .
+                      (lambda ()
+                        (interactive)
+                        (exwm-workspace-switch-create ,i))))
+                  (number-sequence 0 9)))
+      )
+
+(define-key exwm-mode-map (kbd "C-q") 'exwm-send-next-key)
+
+(setq exwm-input-prefix-keys
+      '(?\C-x
+	?\C-u
+	?\M-x
+	?\M-:
+	?\M-&
+	?\M-!
+	?\C-h))
+
+;; Make buffer name more meaningful
+(add-hook 'exwm-update-class-hook
+          (lambda ()
+          (exwm-workspace-rename-buffer exwm-class-name)))
+
+
+(exwm-enable)
 #+end_src
 
 * Configure this file to automatically tangle on save
