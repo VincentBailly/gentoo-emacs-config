@@ -1,43 +1,65 @@
+* Melpa
+
+#+begin_src emacs-lisp :tangle ~/.emacs.d/config.el
+(require 'package)
+(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/"))
+#+end_src
+
+
 * EXWM - Emacs Window Manager
+
+** Prerequisite
+
+- Having X11 server installed.
+- Having emacs >= 25, preferably built with ~--with-wide-int~ set.
+
+** Setup
+
+;;(package-install 'exwm)
 
 #+begin_src emacs-lisp :tangle ~/.emacs.d/config.el
 
-(require 'exwm)
-(setq exwm-input-global-keys
-      `(([?\s-f] . (lambda ()
-                     (interactive)
-                     (start-process-shell-command "firefox" nil "firefox")))
-        ([?\s-r] . exwm-reset)
-	([?\s-&] . (lambda (command)
-		     (interactive (list (read-shell-command "$ ")))
-		     (start-process-shell-command command nil command)))
-	([?\s-w] . exwm-workspace-switch)
-        ,@(mapcar (lambda (i)
-                    `(,(kbd (format "s-%d" i)) .
-                      (lambda ()
-                        (interactive)
-                        (exwm-workspace-switch-create ,i))))
-                  (number-sequence 0 9)))
-      )
+  (if (not (package-installed-p 'exwm))
+      (progn
+        (package-refresh-contents)
+        (package-install 'exwm)))
 
-(define-key exwm-mode-map (kbd "C-q") 'exwm-send-next-key)
+  (require 'exwm)
+  (setq exwm-input-global-keys
+        `(([?\s-f] . (lambda ()
+                       (interactive)
+                       (start-process-shell-command "firefox" nil "firefox")))
+          ([?\s-r] . exwm-reset)
+          ([?\s-&] . (lambda (command)
+                       (interactive (list (read-shell-command "$ ")))
+                       (start-process-shell-command command nil command)))
+          ([?\s-w] . exwm-workspace-switch)
+          ,@(mapcar (lambda (i)
+                      `(,(kbd (format "s-%d" i)) .
+                        (lambda ()
+                          (interactive)
+                          (exwm-workspace-switch-create ,i))))
+                    (number-sequence 0 9)))
+        )
 
-(setq exwm-input-prefix-keys
-      '(?\C-x
-	?\C-u
-	?\M-x
-	?\M-:
-	?\M-&
-	?\M-!
-	?\C-h))
+  (define-key exwm-mode-map (kbd "C-q") 'exwm-send-next-key)
 
-;; Make buffer name more meaningful
-(add-hook 'exwm-update-class-hook
-          (lambda ()
-          (exwm-workspace-rename-buffer exwm-class-name)))
+  (setq exwm-input-prefix-keys
+        '(?\C-x
+          ?\C-u
+          ?\M-x
+          ?\M-:
+          ?\M-&
+          ?\M-!
+          ?\C-h))
+
+  ;; Make buffer name more meaningful
+  (add-hook 'exwm-update-class-hook
+            (lambda ()
+            (exwm-workspace-rename-buffer exwm-class-name)))
 
 
-(exwm-enable)
+  (exwm-enable)
 #+end_src
 
 * Configure this file to automatically tangle on save

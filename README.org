@@ -63,5 +63,5 @@ In emacs
 - open ~$emacsConfigLocalRepo/config.org~
 - a prompt should ask about the local variable, type ~!~ to allow local variables.
 - run ~M-x org-babel-tangle~, this will create config.el in the emacs folder.
-- add the following line to the emacs config file: ~(load "~/.emacs.d/config.el")~
+- add the following line at the beginning of the emacs config file: ~(load "~/.emacs.d/config.el")~
 - restart emacs
