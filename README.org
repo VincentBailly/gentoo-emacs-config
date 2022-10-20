@@ -1,8 +1,59 @@
 #+title: Gentoo emacs config files
 #+author: Vincent Bailly
 
+* Introduction
 
-** Definitions
+I am Vincent Bailly, a software developer presently working on
+JavaScript monorepo infrastructure.
+
+I use emacs both at work and at home. This repository aims at
+documenting my use of emacs as well as saving my configuration and
+workflows to share across devices.
+
+** Principles
+
+*** Feature level
+
+Features can be classified by their level of "high level" vs "low
+level". I tend to depend less on higher level features than most emacs
+users.
+
+**** Benefits of lower level features
+
+- Genericity: low level features are generic and thus useful in a
+  variety of different contexts.
+- Maturity: lower level features are typically more mature than higher
+  level features. This means that they are typically more robust,
+  better documented, better integrated into emacs...
+- Profitability: lower level features don't fall out of
+  fashion. Learning them is a good investment in the long term.
+- Education: using lower level features makes me understand better
+  how emacs works.
+- Specificity: Workflows implemented using lower level features fit
+  better my particular workflows as they are built using my own set of
+  assumptions. This makes my workflows more efficient.
+- Mastery: Mastering lower level features is easier because mastery
+  requires a good understanding of all the "feature stack" and the
+  feature stack is obviously smaller for lower level features.
+
+**** Benefits of higher level features
+
+- Look: Higher level features often have a more polished UI than
+  home made workflows.
+- Familiarity: high level features tend to make emacs feel familiar by
+  replicating well known workflows, like those implemented by VSCode
+  for instance.
+- Code reuse: Higher level features allow us the leverage the work of
+  the community at a fraction of the cost of implementing our own.
+
+*** Do it once
+
+I try to develop my workflows for the long term, I want to implement a
+workflow only once and never need to come back to it again.
+The focus on genericity and robustness is a strategic decision to
+optimise long term productivity.
+
+* Definitions
 
 The following words or expression will have the following definition
 for the scope of this document.
@@ -12,30 +63,30 @@ for the scope of this document.
 - "local repo": git repository hosted on your computer
 - "GH": GitHub.com
 
-** Assumptions
+* Assumptions
 
-*** Remote repo
+** Remote repo
 
 You are the owner of the remote repo and you push to it from only one
 local repo.
 
-*** Git and GH setup
+** Git and GH setup
 
 You have git installed locally and you have already setup local GitHub
 authentication. For example you have registered in GH your SSH local key.
 
-*** Linux
+** Linux
 
 All the commands are run in a Linux environment.
 
-*** Bash
+** Bash
 
 Default shell is bash, and all commands are run in a bash session.
 
 - To check default shell: ~echo $SHELL~
 - To check current shell: ~echo $0~
 
-*** emacs config file
+** emacs config file
 
 Emacs configuration file is ~$HOME/.emacs.d/init.el~
 
@@ -56,7 +107,7 @@ The bash variables can be
 
 #+end_src
 
-*** Tangling config.org
+** First tangling of config.org
 
 In emacs
 
