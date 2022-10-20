@@ -1,10 +1,16 @@
+* Features
+
+#+begin_src emacs-lisp :tangle ~/.emacs.d/config.el
+  (setq enable-exwm t) ;; Set to nil if you don't want to use exwm
+#+end_src
+
 * Melpa
 
 #+begin_src emacs-lisp :tangle ~/.emacs.d/config.el
-(require 'package)
-(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/"))
+  (require 'package)
+  (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/"))
+  (package-initialize)
 #+end_src
-
 
 * EXWM - Emacs Window Manager
 
@@ -15,51 +21,92 @@
 
 ** Setup
 
-;;(package-install 'exwm)
+
 
 #+begin_src emacs-lisp :tangle ~/.emacs.d/config.el
 
-  (if (not (package-installed-p 'exwm))
-      (progn
-        (package-refresh-contents)
-        (package-install 'exwm)))
+    (if (and enable-exwm (eq window-system 'x)) ;; only load exwm when used in X11
+        ;; install exwm package if it is not already installed
+        (progn 
+          (if (not (package-installed-p 'exwm))
+              (progn
+                (package-refresh-contents)
+                (package-install 'exwm)))
 
-  (require 'exwm)
-  (setq exwm-input-global-keys
-        `(([?\s-f] . (lambda ()
-                       (interactive)
-                       (start-process-shell-command "firefox" nil "firefox")))
-          ([?\s-r] . exwm-reset)
-          ([?\s-&] . (lambda (command)
-                       (interactive (list (read-shell-command "$ ")))
-                       (start-process-shell-command command nil command)))
-          ([?\s-w] . exwm-workspace-switch)
-          ,@(mapcar (lambda (i)
-                      `(,(kbd (format "s-%d" i)) .
-                        (lambda ()
-                          (interactive)
-                          (exwm-workspace-switch-create ,i))))
-                    (number-sequence 0 9)))
-        )
+          (require 'exwm)
+          ;; these are the keys that are always bound no matter which window is active
+          ;; and which mode they are in
+          ;; Note that changing this requires restarting emacs
+          (setq exwm-input-global-keys
+                ;; start firefox
+                `(([?\s-f] . (lambda ()
+                               (interactive)
+                               (start-process-shell-command "firefox" nil "firefox")))
+                  ;; switch to line-mode if in a exwm buffer, exit fullscreen mode
+                  ;; and refresh layout.
+                  ([?\s-r] . exwm-reset)
+                  ;; launch a graphical application
+                  ([?\s-&] . (lambda (command)
+                               (interactive (list (read-shell-command "$ ")))
+                               (start-process-shell-command command nil command)))
+                  ;; switch workspace
+                  ([?\s-w] . exwm-workspace-switch)
+                  ;; Super+N to switch to Nth workspace (starts at 0)
+                  ,@(mapcar (lambda (i)
+                              `(,(kbd (format "s-%d" i)) .
+                                (lambda ()
+                                  (interactive)
+                                  (exwm-workspace-switch-create ,i))))
+                            (number-sequence 0 9)))
+                )
 
-  (define-key exwm-mode-map (kbd "C-q") 'exwm-send-next-key)
+          ;; add key bindings for exwm-managed windows in line-mode (ei. not in char-mode).
+          ;; as a reminder here are commands assigned by default to exwm mode:
+          ;; C-c C-f: enter full screen
+          ;; C-c C-h: hide a floating window
+          ;; C-c C-k: switch to char mode
+          ;; C-c C-m: move X window to another workspace
+          ;; C-c C-q: send next key as is to X window (also mapped to C-q below)
+          ;; C-c C-t C-f: toggle between floating and tiling for current window
+          ;; C-c C-t C-m: toggle mode line
+          (define-key exwm-mode-map (kbd "C-q") 'exwm-send-next-key)
+          (define-key exwm-mode-map (kbd "M-o") 'other-window)
 
-  (setq exwm-input-prefix-keys
-        '(?\C-x
-          ?\C-u
-          ?\M-x
-          ?\M-:
-          ?\M-&
-          ?\M-!
-          ?\C-h))
+          ;; simulation keys,
+          (setq exwm-input-simulation-keys
+                '(
+                  ;; ([?\C-n] . [down]) ;; when we hit C-n, the X application receives "down"
+                  ))
+          ;; application specific simulation keys
+          (add-hook 'exwm-manage-finish-hook
+                    (lambda ()
+                      (when (and exwm-class-name
+                                 (string= exwm-class-name "firefox-esr"))
+                        (exwm-input-set-local-simulation-keys
+                         '(
+                           ;; C-s starts a search in firefox
+                           ([?\C-s] . [?\C-f])
+                           )))))
 
-  ;; Make buffer name more meaningful
-  (add-hook 'exwm-update-class-hook
-            (lambda ()
-            (exwm-workspace-rename-buffer exwm-class-name)))
+
+          ;; these are the keys that are ignored by exwm and forwared to emacs
+          (setq exwm-input-prefix-keys
+                '(?\C-x
+                  ?\C-u
+                  ?\M-x
+                  ?\M-:
+                  ?\M-&
+                  ?\M-!
+                  ?\C-h))
+
+          ;; Make buffer name more meaningful
+          (add-hook 'exwm-update-class-hook
+                    (lambda ()
+                      (exwm-workspace-rename-buffer exwm-class-name)))
 
 
-  (exwm-enable)
+          (exwm-enable)
+          ))
 #+end_src
 
 * Configure this file to automatically tangle on save
