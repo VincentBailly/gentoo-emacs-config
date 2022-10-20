@@ -1,0 +1,3 @@
+#+begin_src emacs-lisp :tangle ~/.emacs.d/config.el
+  (setq testing-var 42)
+#+end_src
