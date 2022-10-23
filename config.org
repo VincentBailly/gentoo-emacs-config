@@ -141,12 +141,35 @@
   (scroll-bar-mode -1)
 #+end_src
 
-* Navigation
+* Window navigation
 
 #+begin_src emacs-lisp :tangle ~/.emacs.d/config.el
 ;; Move to next window in a single move (instead of `C-x o`)
 (define-key global-map (kbd "M-o") 'other-window)
 #+end_src
+
+* Text navigation
+
+By default emacs considers that a single space after a dot is not a
+sentence delimiter. I do not separate my sentences with two spaces so
+I tell emacs about that
+
+#+begin_src emacs-lisp :tangle ~/.emacs.d/config.el
+  (setq sentence-end-double-space nil)
+#+end_src
+
+* org-mode
+
+Make org-mode have auto-fill-mode on by default.
+
+#+begin_src emacs-lisp :tangle ~/.emacs.d/config.el
+  (defun init-org-mode ()
+    "initialize org mode"
+    (auto-fill-mode))
+  (add-hook 'org-mode-hook 'init-org-mode)
+#+end_src
+
+(add-hook 
 
 * Configure this file to automatically tangle on save
 
